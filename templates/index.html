@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TextCore</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --text-tertiary: #666666;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --border: #2a2a2a;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+
+        .hero {
+            margin-bottom: 48px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto 24px;
+        }
+
+        .features-chips {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 24px;
+        }
+
+        .chip {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .chip:hover {
+            border-color: var(--accent);
+            color: var(--text-primary);
+        }
+
+        .chip.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 450px 1fr;
+            gap: 32px;
+            align-items: start;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 24px;
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .card.highlighted {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent);
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-icon {
+            color: var(--text-tertiary);
+            cursor: help;
+            transition: color 0.2s;
+        }
+
+        .info-icon:hover {
+            color: var(--accent);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-description {
+            font-size: 13px;
+            color: var(--text-tertiary);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-hint {
+            color: var(--text-tertiary);
+            font-size: 11px;
+            font-weight: 400;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 160px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        textarea::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .checkbox-wrapper {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            transition: border-color 0.2s;
+        }
+
+        .checkbox-wrapper:hover {
+            border-color: var(--text-tertiary);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--accent);
+            margin-top: 2px;
+        }
+
+        .checkbox-content {
+            flex: 1;
+        }
+
+        .checkbox-label {
+            font-size: 13px;
+            color: var(--text-primary);
+            cursor: pointer;
+            user-select: none;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .checkbox-description {
+            font-size: 12px;
+            color: var(--text-tertiary);
+            line-height: 1.4;
+        }
+
+        .btn {
+            width: 100%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .info-panel {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-top: 16px;
+            overflow: hidden;
+        }
+
+        .info-panel-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .info-panel-header svg {
+            color: var(--accent);
+        }
+
+        .info-panel-content {
+            padding: 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .feature-list li {
+            padding: 6px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .feature-list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .feature-list strong {
+            color: var(--text-primary);
+        }
+
+        .info-card {
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .results-area {
+            min-height: 400px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stat-item {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            transition: border-color 0.2s;
+        }
+
+        .stat-item:hover {
+            border-color: var(--text-tertiary);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .sentiment-result {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .sentiment-badge {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .sentiment-positive {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border: 2px solid var(--success);
+        }
+
+        .sentiment-negative {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--error);
+            border: 2px solid var(--error);
+        }
+
+        .sentiment-neutral {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+            border: 2px solid var(--warning);
+        }
+
+        .sentiment-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .sentiment-stat {
+            padding: 12px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+        }
+
+        .sentiment-stat-label {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .sentiment-stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .entity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .entity-item {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: border-color 0.2s;
+        }
+
+        .entity-item:hover {
+            border-color: var(--accent);
+        }
+
+        .entity-text {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .entity-type {
+            font-size: 10px;
+            color: var(--accent);
+            background: rgba(59, 130, 246, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-block;
+            width: fit-content;
+        }
+
+        /* Phrase/N-gram styles */
+        .phrase-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .phrase-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .phrase-item:hover {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .phrase-text {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .phrase-count {
+            color: var(--text-tertiary);
+            font-size: 12px;
+            background: var(--bg-tertiary);
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .ngram-section {
+            margin-bottom: 16px;
+        }
+
+        /* Word Cloud styles */
+        .word-cloud-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            min-height: 200px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .word-cloud-item {
+            display: inline-block;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: default;
+            border: 1px solid transparent;
+        }
+
+        .word-cloud-item:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .word-cloud-item.positive {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .word-cloud-item.negative {
+            background: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .word-cloud-item.neutral {
+            background: rgba(148, 163, 184, 0.15);
+            color: #94a3b8;
+            border-color: rgba(148, 163, 184, 0.3);
+        }
+
+        .word-cloud-legend {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 16px;
+            padding: 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-secondary);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.positive {
+            background: #22c55e;
+        }
+
+        .legend-dot.negative {
+            background: #ef4444;
+        }
+
+        .legend-dot.neutral {
+            background: #94a3b8;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .loading.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .spinner {
+            border: 3px solid var(--border);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--error);
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            display: none;
+            margin-bottom: 16px;
+        }
+
+        .error.active {
+            display: block;
+        }
+
+        .nlp-info {
+            margin-top: 16px;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            font-size: 12px;
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 48px 20px;
+            color: var(--text-tertiary);
+            font-size: 14px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 40px;
+            color: var(--text-tertiary);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        .empty-state-title {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .empty-state-text {
+            font-size: 13px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 968px) {
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: relative;
+                top: 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .sentiment-details {
+                grid-template-columns: 1fr;
+            }
+
+            .entity-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-tertiary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>TextCore</h1>
+            <p>Auto-detects English, Gujarati, and Hindi</p>
+            <div class="features-chips">
+                <span class="chip" onclick="scrollToSection('statsCard')">Text Statistics</span>
+                <span class="chip" onclick="scrollToSection('sentimentCard')">Sentiment Analysis</span>
+                <span class="chip" onclick="scrollToSection('entitiesCard')">Key Terms</span>
+                <span class="chip" onclick="scrollToSection('wordCloudCard')">Word Cloud</span>
+                <span class="chip active" onclick="scrollToSection('all')">Show All</span>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="card">
+                    <div class="card-title">
+                        <span>Configure Analysis</span>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="textInput">
+                            <span>Your Text</span>
+                            <span class="input-hint">Press Enter ↵</span>
+                        </label>
+                        <textarea id="textInput" placeholder="Type or paste your text here...
+
+Try something like: 'This is an amazing product! I love it so much.'"></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label">NLP Processing</label>
+
+                        <div class="checkbox-wrapper">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="removeStopwords" checked>
+                                <div class="checkbox-content">
+                                    <label class="checkbox-label" for="removeStopwords">Remove Stopwords</label>
+                                    <div class="checkbox-description">Filter common words like 'the', 'is', 'and' for better analysis</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="checkbox-wrapper">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="applyStemming">
+                                <div class="checkbox-content">
+                                    <label class="checkbox-label" for="applyStemming">Apply Stemming</label>
+                                    <div class="checkbox-description">Reduce words to root form (English only). Example: 'running' → 'run'</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="analyzeText()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        Analyze Text
+                    </button>
+                </div>
+
+                <div class="info-card">
+                    <strong>💡 Tip:</strong> Try analyzing product reviews, social media posts, or news articles to see sentiment analysis in action!
+                </div>
+
+                <!-- Features Info -->
+                <div class="info-panel">
+                    <div class="info-panel-header">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                        </svg>
+                        <span>What This Analyzer Does</span>
+                    </div>
+                    <div class="info-panel-content">
+                        <ul class="feature-list">
+                            <li><strong>Sentiment Analysis:</strong> Detects if text is positive, negative, or neutral</li>
+                            <li><strong>Word Cloud:</strong> Visual representation with sentiment-based colors</li>
+                            <li><strong>Key Terms:</strong> Extracts important entities from your text</li>
+                            <li><strong>Statistics:</strong> Word counts, unique words, and processing details</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Area -->
+            <div class="results-area">
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <div class="loading-text">Analyzing your text...</div>
+                </div>
+
+                <div class="error" id="error"></div>
+
+                <div id="emptyState" class="empty-state">
+                    <div class="empty-state-icon">📝</div>
+                    <div class="empty-state-title">Start Analyzing</div>
+                    <div class="empty-state-text">Enter some text on the left and click Analyze to see insights</div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="card hidden" id="statsCard">
+                    <div class="card-title">
+                        <span>Text Statistics</span>
+                        <svg class="info-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" title="Shows word counts, unique words, and how many common words (stopwords) were filtered out">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 16v-4M12 8h.01"></path>
+                        </svg>
+                    </div>
+                    <div class="card-description">Quantitative analysis of your text including word counts and NLP processing information</div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">Total Words</div>
+                            <div class="stat-value" id="totalWords">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Unique</div>
+                            <div class="stat-value" id="uniqueWords">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Removed</div>
+                            <div class="stat-value" id="stopwordsRemoved">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Processed</div>
+                            <div class="stat-value" id="afterStopwords">0</div>
+                        </div>
+                    </div>
+                    <div class="nlp-info" id="nlpInfo">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 16v-4M12 8h.01"></path>
+                        </svg>
+                        <span id="nlpInfoText"></span>
+                    </div>
+                </div>
+
+                <!-- Sentiment -->
+                <div class="card hidden" id="sentimentCard">
+                    <div class="card-title">
+                        <span>Sentiment Analysis</span>
+                        <svg class="info-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" title="Analyzes emotional tone: Positive (😊), Neutral (😐), or Negative (😞)">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 16v-4M12 8h.01"></path>
+                        </svg>
+                    </div>
+                    <div class="card-description">Detects emotional tone using 200+ positive and negative sentiment words across all languages</div>
+                    <div class="sentiment-result" id="sentimentResult"></div>
+                </div>
+
+                <!-- Entities -->
+                <div class="card hidden" id="entitiesCard">
+                    <div class="card-title">
+                        <span>Key Terms</span>
+                        <svg class="info-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" title="Extracts important named entities like people, places, and significant terms from your text">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 16v-4M12 8h.01"></path>
+                        </svg>
+                    </div>
+                    <div class="card-description">Important entities and terms extracted using pattern matching and context analysis</div>
+                    <div class="entity-grid" id="entitiesList"></div>
+                </div>
+
+                <!-- Word Cloud -->
+                <div class="card hidden" id="wordCloudCard">
+                    <div class="card-title">
+                        <span>Word Cloud</span>
+                        <svg class="info-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" title="Word frequency visualization: Larger words appear more often. Green = positive, Red = negative, Gray = neutral">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 16v-4M12 8h.01"></path>
+                        </svg>
+                    </div>
+                    <div class="card-description">Interactive visualization where word size = frequency and colors indicate sentiment (🟢 positive, 🔴 negative, ⚪ neutral)</div>
+                    <div class="word-cloud-legend">
+                        <span class="legend-item"><span class="legend-dot positive"></span> Positive</span>
+                        <span class="legend-item"><span class="legend-dot neutral"></span> Neutral</span>
+                        <span class="legend-item"><span class="legend-dot negative"></span> Negative</span>
+                    </div>
+                    <div id="wordCloudContainer" class="word-cloud-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function analyzeText() {
+            const text = document.getElementById('textInput').value;
+            const language = 'auto';  // Always auto-detect language
+            const removeStopwords = document.getElementById('removeStopwords').checked;
+            const applyStemming = document.getElementById('applyStemming').checked;
+
+            if (!text.trim()) {
+                showError('Please enter some text to analyze');
+                return;
+            }
+
+            // Hide empty state
+            document.getElementById('emptyState').classList.add('hidden');
+
+            // Show loading, hide results
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('error').classList.remove('active');
+            document.getElementById('statsCard').classList.add('hidden');
+            document.getElementById('sentimentCard').classList.add('hidden');
+            document.getElementById('entitiesCard').classList.add('hidden');
+            document.getElementById('wordCloudCard').classList.add('hidden');
+
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: text,
+                        language: language,
+                        top_n: 10,
+                        remove_stopwords: removeStopwords,
+                        apply_stemming: applyStemming
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Analysis failed');
+                }
+
+                displayResults(data);
+            } catch (error) {
+                showError(error.message);
+                document.getElementById('emptyState').classList.remove('hidden');
+            } finally {
+                document.getElementById('loading').classList.remove('active');
+            }
+        }
+
+        function displayResults(data) {
+            // Display statistics
+            document.getElementById('totalWords').textContent = data.statistics.total_words;
+            document.getElementById('uniqueWords').textContent = data.statistics.unique_words;
+            document.getElementById('stopwordsRemoved').textContent = data.statistics.stopwords_removed || 0;
+            document.getElementById('afterStopwords').textContent = data.statistics.unique_words_after_stopwords;
+
+            // Display NLP info
+            let nlpInfo = data.statistics.nlp_processing.tokenization + ' tokenization';
+            if (data.statistics.nlp_processing.stopword_removal) {
+                nlpInfo += ' • Stopwords removed';
+            }
+            if (data.statistics.nlp_processing.stemming) {
+                nlpInfo += ' • Stemming applied';
+            }
+            document.getElementById('nlpInfoText').textContent = nlpInfo;
+            document.getElementById('statsCard').classList.remove('hidden');
+
+            // Display language detection
+            if (data.detected_language) {
+                const langNames = {
+                    'english': 'English',
+                    'hindi': 'Hindi',
+                    'gujarati': 'Gujarati'
+                };
+                const detectedLang = langNames[data.detected_language] || data.detected_language;
+                nlpInfo += ` • Detected: ${detectedLang}`;
+                document.getElementById('nlpInfoText').textContent = nlpInfo;
+            }
+
+            // Display sentiment
+            displaySentiment(data.sentiment);
+
+            // Display entities
+            displayEntities(data.entities);
+
+            // Display word cloud
+            displayWordCloud(data.word_cloud);
+
+            // Apply any active filter
+            setTimeout(() => {
+                applyCurrentFilter();
+            }, 200);
+        }
+
+        function displaySentiment(sentiment) {
+            const sentimentResult = document.getElementById('sentimentResult');
+
+            const sentimentClass = `sentiment-${sentiment.sentiment}`;
+            const sentimentLabel = sentiment.sentiment.charAt(0).toUpperCase() + sentiment.sentiment.slice(1);
+
+            const sentimentEmoji = {
+                'positive': '😊',
+                'negative': '😞',
+                'neutral': '😐'
+            };
+
+            sentimentResult.innerHTML = `
+                <div class="sentiment-badge ${sentimentClass}">${sentimentEmoji[sentiment.sentiment]} ${sentimentLabel}</div>
+                <div class="sentiment-details">
+                    <div class="sentiment-stat">
+                        <div class="sentiment-stat-label">Positive</div>
+                        <div class="sentiment-stat-value" style="color: var(--success)">${sentiment.positive_words}</div>
+                    </div>
+                    <div class="sentiment-stat">
+                        <div class="sentiment-stat-label">Score</div>
+                        <div class="sentiment-stat-value">${sentiment.score}</div>
+                    </div>
+                    <div class="sentiment-stat">
+                        <div class="sentiment-stat-label">Negative</div>
+                        <div class="sentiment-stat-value" style="color: var(--error)">${sentiment.negative_words}</div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('sentimentCard').classList.remove('hidden');
+        }
+
+        function displayEntities(entities) {
+            const entitiesList = document.getElementById('entitiesList');
+
+            if (entities.length === 0) {
+                entitiesList.innerHTML = '<div class="no-results">No key terms detected in your text</div>';
+            } else {
+                entitiesList.innerHTML = '';
+                entities.slice(0, 12).forEach(entity => {
+                    const entityItem = document.createElement('div');
+                    entityItem.className = 'entity-item';
+                    entityItem.innerHTML = `
+                        <span class="entity-text">${entity.text}</span>
+                        <span class="entity-type">${entity.type}</span>
+                    `;
+                    entitiesList.appendChild(entityItem);
+                });
+            }
+
+            document.getElementById('entitiesCard').classList.remove('hidden');
+        }
+
+        function displayWordCloud(wordCloudData) {
+            const container = document.getElementById('wordCloudContainer');
+
+            if (wordCloudData.length === 0) {
+                container.innerHTML = '<div class="no-results">No words to display</div>';
+            } else {
+                container.innerHTML = '';
+
+                // Calculate font sizes based on frequency
+                const maxFreq = Math.max(...wordCloudData.map(w => w.frequency));
+                const minFreq = Math.min(...wordCloudData.map(w => w.frequency));
+
+                wordCloudData.forEach(wordData => {
+                    // Scale font size between 14px and 36px
+                    const normalizedFreq = (wordData.frequency - minFreq) / (maxFreq - minFreq || 1);
+                    const fontSize = 14 + (normalizedFreq * 22);
+
+                    const wordItem = document.createElement('div');
+                    wordItem.className = `word-cloud-item ${wordData.sentiment}`;
+                    wordItem.style.fontSize = `${fontSize}px`;
+                    wordItem.textContent = wordData.word;
+                    wordItem.title = `${wordData.word}: ${wordData.frequency} times`;
+
+                    container.appendChild(wordItem);
+                });
+            }
+
+            document.getElementById('wordCloudCard').classList.remove('hidden');
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = '⚠️ ' + message;
+            errorDiv.classList.add('active');
+        }
+
+        // Keyboard shortcuts
+        document.getElementById('textInput').addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                analyzeText();
+            } else if (e.key === 'Enter' && !e.shiftKey) {
+                const text = this.value.trim();
+                if (text && text.length > 10) {
+                    e.preventDefault();
+                    analyzeText();
+                }
+            }
+        });
+
+        // Section navigation
+        let currentFilter = 'all';
+
+        function scrollToSection(section) {
+            // Update active chip
+            document.querySelectorAll('.chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            currentFilter = section;
+
+            // Remove all highlights
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.remove('highlighted');
+            });
+
+            // Show/hide sections based on filter
+            if (section === 'all') {
+                document.getElementById('statsCard')?.classList.remove('hidden');
+                document.getElementById('sentimentCard')?.classList.remove('hidden');
+                document.getElementById('entitiesCard')?.classList.remove('hidden');
+                document.getElementById('wordCloudCard')?.classList.remove('hidden');
+
+                // Scroll to first result
+                setTimeout(() => {
+                    const firstCard = document.getElementById('statsCard');
+                    if (firstCard) {
+                        firstCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 100);
+            } else {
+                // Hide all sections first
+                document.getElementById('statsCard')?.classList.add('hidden');
+                document.getElementById('sentimentCard')?.classList.add('hidden');
+                document.getElementById('entitiesCard')?.classList.add('hidden');
+                document.getElementById('wordCloudCard')?.classList.add('hidden');
+
+                // Show only the selected section
+                const targetElement = document.getElementById(section);
+                if (targetElement) {
+                    targetElement.classList.remove('hidden');
+                    setTimeout(() => {
+                        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                }
+            }
+        }
+
+        // Apply filter when results are displayed
+        function applyCurrentFilter() {
+            if (currentFilter !== 'all') {
+                scrollToSection(currentFilter);
+            }
+        }
+    </script>
+</body>
+</html>

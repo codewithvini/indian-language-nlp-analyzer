@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: indian-language-nlp-analyzer
+    env: python
+    buildCommand: pip install -r requirements.txt && python -m nltk.downloader punkt averaged_perceptron_tagger maxent_ne_chunker words
+    startCommand: gunicorn analyzer:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
