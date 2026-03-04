@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import re
 from collections import Counter
-import pandas as pd
 import nltk
 from nltk.stem import PorterStemmer, SnowballStemmer
 from nltk.tokenize import word_tokenize
